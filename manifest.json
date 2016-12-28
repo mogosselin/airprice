@@ -12,6 +12,6 @@
   "content_scripts": [ {
     "js": [ "jquery-2.0.2.min.js", "background.js", "moment.js" ],
     "css": ["customStyles.css"],
-    "matches": ["http://www.airbnb.*", "https://www.airbnb.*/*","http://airbnb.*", "https://airbnb.*/*"]
+    "matches": ["http://*/s/*", "https://*/s/*"]
   }]
 }
