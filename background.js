@@ -1,3 +1,9 @@
+//! Airprice Chrome extension
+//! version : 0.1
+//! authors : Marc-Olivier Gosselin
+//! license : MIT
+//! mogosselin.com
+
 if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf("/s/") > -1 ) {
 
     $(document).ready(function() {
@@ -17,7 +23,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         getMonth = function(date) {
           var month = date.getMonth() + 1;
           return month < 10 ? '0' + month : '' + month; // ('' + month) for string result
-        }
+        };
 
         var domain = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
 
@@ -66,16 +72,12 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         });
 
-
-
-
         $('body').append('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: white; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="javascript: void();">[Close]</a></div></div>')
         $('#airtotal-close').click(function() {
             $('#airtotal').css('display', 'none');
         });
 
-        addCommas = function(nStr)
-        {
+        addCommas = function(nStr) {
             nStr += '';
             x = nStr.split('.');
             x1 = x[0];
@@ -85,7 +87,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 x1 = x1.replace(rgx, '$1' + ',' + '$2');
             }
             return x1 + x2;
-        }
+        };
 
         updatePrices = function() {
             $('.listing-card-wrapper').each(function() {
@@ -117,14 +119,14 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 $(this).removeClass('listing-card-wrapper');
 
             });
-        }
+        };
 
         updatePricesLoop = function() {
             updatePrices();
             setTimeout(function () {
                 updatePricesLoop();
             }, 1000);
-        }
+        };
 
         addRoom = function(room) {
             var instantBookable = '';
@@ -166,7 +168,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                return $(a).attr('data-price') - $(b).attr('data-price');
             }).appendTo('#airtotal');
 
-        }
+        };
 
         getFinalResult = function(searchResults) {
             var listing_id = searchResults.listing.id;
@@ -196,7 +198,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 addRoom(room);
             });
 
-        }
+        };
 
         updateQueryStringParameter = function(uri, key, value) {
           var re = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
@@ -211,7 +213,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             var separator = uri.indexOf('?') !== -1 ? "&" : "?";
             return uri + separator + key + "=" + value + hash;
           }
-        }
+        };
 
         getParameterByName = function (name, url) {
             if (!url) {
@@ -223,7 +225,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             if (!results) return null;
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
+        };
 
         updateQuerystringValues = function(urlSource, urlTarget, params) {
             for (var i=0; i<params.length; i++) {
@@ -236,10 +238,9 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             }
 
             return urlSource;
-        }
+        };
 
-        removeParameter = function(url, parameter)
-        {
+        removeParameter = function(url, parameter) {
           var urlparts= url.split('?');
 
           if (urlparts.length>=2)
@@ -255,7 +256,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
               url = urlBase+'?'+pars.join('&');
           }
           return url;
-        }
+        };
 
         getListings = function() {
             console.log('current checking: ' + check_in);
@@ -313,7 +314,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 'sw_lat',
                 'sw_lng',
                 'zoom'
-            ]
+            ];
 
             searchParams = updateQuerystringValues(searchParams, document.URL, paramNames);
             searchParams = removeParameter(searchParams, 'page');
@@ -337,7 +338,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 });
             }
 
-        }
+        };
 
         $('#header .regular-header').after('<div style="border: 1px solid #dce0e0; position: absolute; background-color: white; top:61px; z-index:10; width: 238px;"><a id="get-listing" href="javascript: void();">Get all listings...</a></div>');
         $('#get-listing').click(function() {
