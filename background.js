@@ -67,12 +67,9 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             check_in_price_format = moment($('#datespan-checkin').val().toUpperCase(), date_format).format('YYYY-MM-DD');
             check_out_price_format = moment($('#datespan-checkout').val().toUpperCase(), date_format).format('YYYY-MM-DD');
 
-            console.log('checkin price: ' + check_in_price_format);
-            console.log('checkout price: ' + check_out_price_format);
-
         });
 
-        $('body').append('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: white; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="javascript: void();">[Close]</a></div></div>')
+        $('body').append('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: #F0F0F0; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="javascript: void();">[Close]</a></div></div>')
         $('#airtotal-close').click(function() {
             $('#airtotal').css('display', 'none');
         });
@@ -182,7 +179,11 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
             var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in_price_format + "&check_out=" + check_out_price_format + "&number_of_adults=" + number_of_adults + "&number_of_children=" + number_of_children + "&number_of_infants=" + number_of_infants + "&launchInfantsV2=true&key=" + key + "&currency=" + currency + "&locale=en-US";
 
-            $.getJSON( priceUrl, function( data ) {
+            //Establish connection to php script
+            $.ajax({
+              type: 'GET',
+              url: priceUrl
+            }).done(function(data) {
                 var totalPrice = data.pricing_quotes[0].price.total.amount;
                 var discount = '';
 
@@ -196,7 +197,9 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 var url = '/rooms/' + listing_id +'?checkin=' + check_in + '&checkout=' + check_out + '&guests=' + guests + '&adults=' + number_of_adults + '&children=' + number_of_children + '&infants=' + number_of_infants
                 var room = {price: totalPrice, discount: discount, name: name, url: url, image: image, nbReviews: nbReviews, starRating: starRating, roomType: roomType, instantBookable: instantBookable, dailyPrice: dailyPrice};
                 addRoom(room);
-            });
+
+            })
+            .fail(function() { console.log("error"); });
 
         };
 
@@ -259,7 +262,6 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         };
 
         getListings = function() {
-            console.log('current checking: ' + check_in);
             $('#airtotal').css('display', 'block');
             $('#airtotal div.listing').remove();
 
@@ -296,9 +298,6 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             searchParams = searchParams.replace(checkinVal, newCheckinVal);
             searchParams = searchParams.replace(checkoutVal, newCheckoutVal);
 
-            console.log('************')
-            console.log(searchParams);
-
             var paramNames = [
                 'adults',
                 'checkin',
@@ -319,20 +318,17 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             searchParams = updateQuerystringValues(searchParams, document.URL, paramNames);
             searchParams = removeParameter(searchParams, 'page');
 
-            console.log('New search params:' + searchParams);
-
-
             var urls = [nbPages-1];
             for (var i=0; i<nbPages; i++) {
                 urls[i] = searchParams + '&page=' + (i + 1);
             }
 
-            for (var i=0; i<nbPages; i++) {
-                $.getJSON( domain + '/' + urls[i], function( data ) {
+            for (var j=0; j<nbPages; j++) {
+                $.getJSON( domain + '/' + urls[j], function( data ) {
                     var searchResults = data.results_json.search_results;
 
-                    for (var j = 0; j < searchResults.length; j++) {
-                        getFinalResult(searchResults[j]);
+                    for (var k = 0; k < searchResults.length; k++) {
+                        getFinalResult(searchResults[k]);
                     }
 
                 });
@@ -340,7 +336,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         };
 
-        $('#header .regular-header').after('<div style="border: 1px solid #dce0e0; position: absolute; background-color: white; top:61px; z-index:10; width: 238px;"><a id="get-listing" href="javascript: void();">Get all listings...</a></div>');
+        $('#header .regular-header').after('<div style="border: 1px solid #dce0e0; position: absolute; background-color: #F0F0F0; top:0px; z-index:11; width: 238px;"><a id="get-listing" href="javascript: void();">Get all listings...</a></div>');
         $('#get-listing').click(function() {
             getListings();
         });
