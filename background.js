@@ -35,9 +35,9 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         key = key.substring(7, endOf);
 
         var currency = '???';
-        $('sup[class="currency-code"]').each(function() {
-            if ($(this).html().length == 4) {
-                currency  = $.trim($(this).html());
+        $('#currency-selector').each(function() {
+            if ($(this).val().length == 3) {
+                currency  = $.trim($(this).val());
                 return false;
             }
         });
@@ -47,29 +47,28 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         var check_out = '';
         var check_out_price_format = '';
         var guests = '';
-        var number_of_adults = '';
-        var number_of_children = '';
-        var number_of_infants = '';
 
 
-        $('.listing-card-wrapper:first').each(function() {
-            var url = $(this).find('.media-photo').attr('href');
+        $('[class*=listingCardWrapper]:first').each(function() {
+            var url = $(this).find('[class^=anchor_]').attr('href');
 
             check_in = decodeURIComponent(getVal(url, '?checkin=', '&checkout='));
             check_out = decodeURIComponent(getVal(url, '&checkout=', '&guests='));
             guests = getVal(url, '&guests=', '&adults=');
-            number_of_adults = getVal(url, '&adults=', '&children=');
-            number_of_children = getVal(url, '&children=', '&infants=');
-            number_of_infants = url.substring(url.indexOf('&infants=') + 9);
+            // number_of_adults = getVal(url, '&adults=', '&children=');
+            // number_of_children = getVal(url, '&children=', '&infants=');
+            // number_of_infants = url.substring(url.indexOf('&infants=') + 9);
 
-            var date_format = $('#datespan-checkin-description').html().substring(39).toUpperCase();
+            var date_format = "D MMM";
 
-            check_in_price_format = moment($('#datespan-checkin').val().toUpperCase(), date_format).format('YYYY-MM-DD');
-            check_out_price_format = moment($('#datespan-checkout').val().toUpperCase(), date_format).format('YYYY-MM-DD');
+            var dates = $('[class^=dateRange_]').text().split(' – ');
+
+            check_in_price_format = moment(dates[0], date_format).format('YYYY-MM-DD');
+            check_out_price_format = moment(dates[1], date_format).format('YYYY-MM-DD');
 
         });
 
-        $('body').append('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: #F0F0F0; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="javascript: void();">[Close]</a></div></div>')
+        $('body').prepend('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: #F0F0F0; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="javascript: void();">[Close]</a></div></div>')
         $('#airtotal-close').click(function() {
             $('#airtotal').css('display', 'none');
         });
@@ -87,16 +86,13 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         };
 
         updatePrices = function() {
-            $('.listing-card-wrapper').each(function() {
-                var url = $(this).find('.media-photo').attr('href');
+            $('[class*=listingCardWrapper]:first').each(function() {
+                var url = $(this).find('[class^=anchor_]').attr('href');
 
                 var listing_id = getVal(url, '/rooms/', '?checkin=');
                 var check_in = getVal(url, '?checkin=', '&checkout=');
                 var check_out = getVal(url, '&checkout=', '&guests=');
                 var guests = getVal(url, '&guests=', '&adults=');
-                var number_of_adults = getVal(url, '&adults=', '&children=');
-                var number_of_children = getVal(url, '&children=', '&infants=');
-                var number_of_infants = url.substring(url.indexOf('&infants=') + 9);
 
                 check_in = check_in.split('-');
                 check_in = check_in[2] + '-' + check_in[1] + '-' + check_in[0];
@@ -104,7 +100,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 check_out = check_out.split('-');
                 check_out = check_out[2] + '-' + check_out[1] + '-' + check_out[0];
 
-                var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in + "&check_out=" + check_out + "&number_of_adults=" + number_of_adults + "&number_of_children=" + number_of_children + "&number_of_infants=" + number_of_infants + "&launchInfantsV2=true&key=" + key + "&currency=" + currency + "&locale=en-US";
+                var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in + "&check_out=" + check_out + "&key=" + key + "&currency=" + currency + "&locale=en-US";
 
                 $.getJSON( priceUrl, function( data ) {
                     var totalPrice = data.pricing_quotes[0].price.total.amount;
@@ -147,7 +143,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 html += '<div>';
                     html += '<a href="' + room.url + '">';
                     html += '<div style="max-height: 200px; overflow: hidden;"><img style="width: 300px; height: auto;" src="' + room.image + '"></div>';
-                    html += '<span style="position:absolute; margin-top:-20px; color: white; background-color: rgba(45,45,45,0.9);">' + addCommas(room.price) + '<sup>' + currency + '</sup> <span style="font-size: 10px;">(' + room.dailyPrice + ' daily)<span></span>';
+                    html += '<span style="position:absolute; margin-top:-20px; color: white; background-color: rgba(45,45,45,0.9);">' + addCommas(room.price) + '<sup>' + currency + '</sup>';
                     html += '</a>';
                 html += '</div>';
                 html += '<div><a href="' + room.url + '">' + room.name + instantBookable + '</a></div>';
@@ -156,6 +152,9 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 if (room.discount.length > 0) {
                     html += '<div style="font-size: 10px; font-color: #ff0000; font-style: italic">' + room.discount + '</div>';
                 }
+
+                html += '<div>';
+                html += '<a target="_blank" href="http://maps.google.com/?q=' + room.lat + ',' + room.lng + '">Map link</a>';
 
             html += '</div>';
 
@@ -175,9 +174,12 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             var starRating = searchResults.listing.star_rating;
             var roomType = searchResults.listing.room_type;
             var instantBookable = searchResults.listing.instant_bookable;
-            var dailyPrice = searchResults.pricing_quote.rate.amount;
+            var lat = searchResults.listing.lat;
+            var lng = searchResults.listing.lng;
+            // var dailyPrice = searchResults.pricing_quote.rate.amount;
+            // no longer returned
 
-            var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in_price_format + "&check_out=" + check_out_price_format + "&number_of_adults=" + number_of_adults + "&number_of_children=" + number_of_children + "&number_of_infants=" + number_of_infants + "&launchInfantsV2=true&key=" + key + "&currency=" + currency + "&locale=en-US";
+            var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in_price_format + "&check_out=" + check_out_price_format + "&key=" + key + "&currency=" + currency + "&locale=en-US";
 
             //Establish connection to php script
             $.ajax({
@@ -194,8 +196,8 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                     }
                 }
 
-                var url = '/rooms/' + listing_id +'?checkin=' + check_in + '&checkout=' + check_out + '&guests=' + guests + '&adults=' + number_of_adults + '&children=' + number_of_children + '&infants=' + number_of_infants
-                var room = {price: totalPrice, discount: discount, name: name, url: url, image: image, nbReviews: nbReviews, starRating: starRating, roomType: roomType, instantBookable: instantBookable, dailyPrice: dailyPrice};
+                var url = '/rooms/' + listing_id +'?checkin=' + check_in + '&checkout=' + check_out + '&guests=' + guests + '&adults=';
+                var room = {price: totalPrice, discount: discount, name: name, url: url, image: image, nbReviews: nbReviews, starRating: starRating, roomType: roomType, instantBookable: instantBookable, lat: lat, lng: lng};
                 addRoom(room);
 
             })
@@ -275,7 +277,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 $('#airtotal').css('display', 'block');
             });
 
-            var nbPages = parseInt($('div.pagination ul.list-unstyled li:last').prev().find('a').html());
+            var nbPages = parseInt($('nav[role=navigation]').find('ul').eq(0).find('li:last-child').prev().text());
 
             if (isNaN(nbPages)) {
                 nbPages = 1;
@@ -336,7 +338,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         };
 
-        $('#header .regular-header').after('<div style="border: 1px solid #dce0e0; position: absolute; background-color: #F0F0F0; top:0px; z-index:11; width: 238px;"><a id="get-listing" href="javascript: void();">Get all listings...</a></div>');
+        $('div[role=menubar]').after('<div style="border: 1px solid #dce0e0; position: absolute; background-color: #F0F0F0; top:0px; z-index:11; width: 238px;"><a id="get-listing" href="javascript: void();">Get all listings...</a></div>');
         $('#get-listing').click(function() {
             getListings();
         });
