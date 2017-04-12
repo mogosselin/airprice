@@ -147,7 +147,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                     html += '</a>';
                 html += '</div>';
                 html += '<div><a href="' + room.url + '">' + room.name + instantBookable + '</a></div>';
-                html += '<div class="text-muted text-truncate listing-location" style="font-size: 12px;">' + room.roomType + ' · ' + stars + ' · ' + room.nbReviews + ' reviews' + '</div>';
+                html += '<div class="text-muted text-truncate listing-location" style="font-size: 12px;">' + room.city + ' · ' + room.roomType + ' · ' + stars + ' · ' + room.nbReviews + ' reviews' + '</div>';
 
                 if (room.discount.length > 0) {
                     html += '<div style="font-size: 10px; font-color: #ff0000; font-style: italic">' + room.discount + '</div>';
@@ -176,6 +176,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             var instantBookable = searchResults.listing.instant_bookable;
             var lat = searchResults.listing.lat;
             var lng = searchResults.listing.lng;
+            var city = searchResults.listing.localized_city;
             // var dailyPrice = searchResults.pricing_quote.rate.amount;
             // no longer returned
 
@@ -197,7 +198,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 }
 
                 var url = '/rooms/' + listing_id +'?checkin=' + check_in + '&checkout=' + check_out + '&guests=' + guests + '&adults=';
-                var room = {price: totalPrice, discount: discount, name: name, url: url, image: image, nbReviews: nbReviews, starRating: starRating, roomType: roomType, instantBookable: instantBookable, lat: lat, lng: lng};
+                var room = {price: totalPrice, discount: discount, name: name, url: url, image: image, nbReviews: nbReviews, starRating: starRating, roomType: roomType, instantBookable: instantBookable, lat: lat, lng: lng, city: city};
                 addRoom(room);
 
             })
