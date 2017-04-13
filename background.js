@@ -49,12 +49,14 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         var guests = '';
 
 
+
         $('[class*=listingCardWrapper]:first').each(function() {
             var url = $(this).find('[class^=anchor_]').attr('href');
+            var paramguests = getVal(url, '&guests=', '&adults=');
 
             check_in = decodeURIComponent(getVal(url, '?checkin=', '&checkout='));
             check_out = decodeURIComponent(getVal(url, '&checkout=', '&guests='));
-            guests = getVal(url, '&guests=', '&adults=');
+            guests = isNaN(paramguests) ? 1 : paramguests;
             // number_of_adults = getVal(url, '&adults=', '&children=');
             // number_of_children = getVal(url, '&children=', '&infants=');
             // number_of_infants = url.substring(url.indexOf('&infants=') + 9);
