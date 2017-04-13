@@ -70,7 +70,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         });
 
-        $('body').prepend('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: #F0F0F0; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="javascript: void();">[Close]</a></div></div>')
+        $('body').prepend('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: #F0F0F0; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="#">[Close]</a></div></div>')
         $('#airtotal-close').click(function() {
             $('#airtotal').css('display', 'none');
         });
@@ -156,7 +156,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 }
 
                 html += '<div>';
-                html += '<a target="_blank" href="http://maps.google.com/?q=' + room.lat + ',' + room.lng + '">Map link</a>';
+                html += '<a target="_blank" href="https://maps.google.com/?q=' + room.lat + ',' + room.lng + '">Map link</a>';
 
             html += '</div>';
 
@@ -341,7 +341,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         };
 
-        $('.search-results:not(.loading)').before('<div style="text-align:center; margin: 10px auto;"><a id="get-listing" style="display: inline-block; padding: 10px; color: white; background: #008489; border-radius: 6px;" href="javascript: void();">Get all listings...</a></div>');
+        $('.search-results:not(.loading)').before('<div style="text-align:center; margin: 10px auto;"><a id="get-listing" style="display: inline-block; padding: 10px; color: white; background: #008489; border-radius: 6px;" href="#">Get all listings...</a></div>');
         $('#get-listing').click(function() {
             getListings();
         });
