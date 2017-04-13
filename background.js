@@ -131,10 +131,12 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             var lat = searchResults.listing.lat;
             var lng = searchResults.listing.lng;
             var city = searchResults.listing.localized_city;
+            var check_in = searchResults.pricing_quote.check_in;
+            var check_out = searchResults.pricing_quote.check_out;
             // var dailyPrice = searchResults.pricing_quote.rate.amount;
             // no longer returned
 
-            var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in_price_format + "&check_out=" + check_out_price_format + "&key=" + key + "&currency=" + currency + "&locale=en-US";
+            var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in + "&check_out=" + check_out + "&key=" + key + "&currency=" + currency + "&locale=en-US";
 
             //Establish connection to php script
             $.ajax({
