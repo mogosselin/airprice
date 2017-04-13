@@ -339,7 +339,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         };
 
-        $('div[role=menubar]').after('<div style="border: 1px solid #dce0e0; position: absolute; background-color: #F0F0F0; top:0px; z-index:11; width: 238px;"><a id="get-listing" href="javascript: void();">Get all listings...</a></div>');
+        $('.search-results:not(.loading)').before('<div style="text-align:center; margin: 10px auto;"><a id="get-listing" style="display: inline-block; padding: 10px; color: white; background: #008489; border-radius: 6px;" href="javascript: void();">Get all listings...</a></div>');
         $('#get-listing').click(function() {
             getListings();
         });
