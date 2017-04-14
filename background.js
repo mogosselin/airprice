@@ -37,7 +37,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
 
         $('[class*=listingCardWrapper]:first').each(function() {
-            var url = $(this).find('[class^=anchor_]').attr('href');
+            var url = $(this).find('a').eq(0).attr('href');
             var urlParams = new URLSearchParams(url.split('?')[1]);
             var paramguests = urlParams.get('guests');
 
