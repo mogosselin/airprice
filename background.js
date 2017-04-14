@@ -7,19 +7,6 @@
 if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf("/s/") > -1 ) {
 
     $(document).ready(function() {
-        getVal = function(str, start, end) {
-            var startPos = str.indexOf(start);
-            var endPos = str.indexOf(end);
-
-            if (end == '') {
-                endPos = str.length;
-            }
-
-            var val = '';
-            val = str.substring(startPos + start.length, endPos);
-            return val;
-        };
-
         getMonth = function(date) {
           var month = date.getMonth() + 1;
           return month < 10 ? '0' + month : '' + month; // ('' + month) for string result
@@ -46,15 +33,18 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         var check_in_price_format = '';
         var check_out = '';
         var check_out_price_format = '';
-        var guests = '';
+        var guests = '1';
 
 
         $('[class*=listingCardWrapper]:first').each(function() {
             var url = $(this).find('[class^=anchor_]').attr('href');
+            var urlParams = new URLSearchParams(url.split('?')[1]);
+            var paramguests = urlParams.get('guests');
 
-            check_in = decodeURIComponent(getVal(url, '?checkin=', '&checkout='));
-            check_out = decodeURIComponent(getVal(url, '&checkout=', '&guests='));
-            guests = getVal(url, '&guests=', '&adults=');
+            check_in = urlParams.get('checkin');
+            check_out = urlParams.get('checkout');
+            guests = paramguests == undefined ? 1 : paramguests;
+
             // number_of_adults = getVal(url, '&adults=', '&children=');
             // number_of_children = getVal(url, '&children=', '&infants=');
             // number_of_infants = url.substring(url.indexOf('&infants=') + 9);
@@ -68,7 +58,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         });
 
-        $('body').prepend('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: #F0F0F0; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="javascript: void();">[Close]</a></div></div>')
+        $('body').prepend('<div id="airtotal" style="width: 100%; display: none; position: absolute; background: #F0F0F0; padding: 10px; z-index: 11;"><div id="airtotal-close"><a href="#">[Close]</a></div></div>')
         $('#airtotal-close').click(function() {
             $('#airtotal').css('display', 'none');
         });
@@ -83,42 +73,6 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 x1 = x1.replace(rgx, '$1' + ',' + '$2');
             }
             return x1 + x2;
-        };
-
-        updatePrices = function() {
-            $('[class*=listingCardWrapper]:first').each(function() {
-                var url = $(this).find('[class^=anchor_]').attr('href');
-
-                var listing_id = getVal(url, '/rooms/', '?checkin=');
-                var check_in = getVal(url, '?checkin=', '&checkout=');
-                var check_out = getVal(url, '&checkout=', '&guests=');
-                var guests = getVal(url, '&guests=', '&adults=');
-
-                check_in = check_in.split('-');
-                check_in = check_in[2] + '-' + check_in[1] + '-' + check_in[0];
-
-                check_out = check_out.split('-');
-                check_out = check_out[2] + '-' + check_out[1] + '-' + check_out[0];
-
-                var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in + "&check_out=" + check_out + "&key=" + key + "&currency=" + currency + "&locale=en-US";
-
-                $.getJSON( priceUrl, function( data ) {
-                    var totalPrice = data.pricing_quotes[0].price.total.amount;
-                    var currentPrice = $('a[href="' + url + '"]').parent().find('span.price-amount').html();
-                    currentPrice = currentPrice + ' (' + addCommas(totalPrice) + ' total)';
-                    $('a[href="' + url + '"]').parent().find('span.price-amount').html(currentPrice);
-                });
-
-                $(this).removeClass('listing-card-wrapper');
-
-            });
-        };
-
-        updatePricesLoop = function() {
-            updatePrices();
-            setTimeout(function () {
-                updatePricesLoop();
-            }, 1000);
         };
 
         addRoom = function(room) {
@@ -154,7 +108,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 }
 
                 html += '<div>';
-                html += '<a target="_blank" href="http://maps.google.com/?q=' + room.lat + ',' + room.lng + '">Map link</a>';
+                html += '<a target="_blank" href="https://maps.google.com/?q=' + room.lat + ',' + room.lng + '">Map link</a>';
 
             html += '</div>';
 
@@ -177,10 +131,12 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             var lat = searchResults.listing.lat;
             var lng = searchResults.listing.lng;
             var city = searchResults.listing.localized_city;
+            var check_in = searchResults.pricing_quote.check_in;
+            var check_out = searchResults.pricing_quote.check_out;
             // var dailyPrice = searchResults.pricing_quote.rate.amount;
             // no longer returned
 
-            var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in_price_format + "&check_out=" + check_out_price_format + "&key=" + key + "&currency=" + currency + "&locale=en-US";
+            var priceUrl = domain + "/api/v2/pricing_quotes?guests=" + guests + "&listing_id=" + listing_id + "&_format=for_detailed_booking_info_on_web_p3_with_message_data&_interaction_type=pageload&_intents=p3_book_it&show_smart_promotion=0&check_in=" + check_in + "&check_out=" + check_out + "&key=" + key + "&currency=" + currency + "&locale=en-US";
 
             //Establish connection to php script
             $.ajax({
@@ -206,64 +162,6 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         };
 
-        updateQueryStringParameter = function(uri, key, value) {
-          var re = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
-          if (uri.match(re)) {
-            return uri.replace(re, '$1' + key + "=" + value + '$2');
-          } else {
-            var hash =  '';
-            if( uri.indexOf('#') !== -1 ){
-                hash = uri.replace(/.*#/, '#');
-                uri = uri.replace(/#.*/, '');
-            }
-            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-            return uri + separator + key + "=" + value + hash;
-          }
-        };
-
-        getParameterByName = function (name, url) {
-            if (!url) {
-              url = window.location.href;
-            }
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        };
-
-        updateQuerystringValues = function(urlSource, urlTarget, params) {
-            for (var i=0; i<params.length; i++) {
-                var param = params[i];
-                var newValue = getParameterByName(param, urlTarget);
-
-                if (newValue != null) {
-                    urlSource = updateQueryStringParameter(urlSource, param, newValue);
-                }
-            }
-
-            return urlSource;
-        };
-
-        removeParameter = function(url, parameter) {
-          var urlparts= url.split('?');
-
-          if (urlparts.length>=2)
-          {
-              var urlBase=urlparts.shift(); //get first part, and remove from array
-              var queryString=urlparts.join("?"); //join it back up
-
-              var prefix = encodeURIComponent(parameter)+'=';
-              var pars = queryString.split(/[&;]/g);
-              for (var i= pars.length; i-->0;)               //reverse iteration as may be destructive
-                  if (pars[i].lastIndexOf(prefix, 0)!==-1)   //idiom for string.startsWith
-                      pars.splice(i, 1);
-              url = urlBase+'?'+pars.join('&');
-          }
-          return url;
-        };
-
         getListings = function() {
             $('#airtotal').css('display', 'block');
             $('#airtotal div.listing').remove();
@@ -287,19 +185,20 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             var metaUrl = $('meta[property="al:ios:url"]').attr('content');
             metaUrl = metaUrl.replace('check_in', 'checkin');
             metaUrl = metaUrl.replace('check_out', 'checkout');
-            var searchParams = '/search/search_results?' + metaUrl.substring(18) + '&location=' + $('#header-search-form').val();
+            var searchParams = '?' + metaUrl.substring(18) + '&location=' + $('.copy_14aozyc').eq(0).text();
             searchParams = decodeURIComponent(searchParams);
+            searchParams = new URLSearchParams(searchParams);
 
-            var checkinVal = getVal(searchParams, '&checkin=', '&checkout=');
-            var checkoutVal = getVal(searchParams, '&checkout=', '&children=');
+            var checkinVal = searchParams.get('checkin');
+            var checkoutVal = searchParams.get('checkout');;
 
             var checkinArr = checkinVal.split('/');
             var checkoutArr = checkoutVal.split('/');
 
             var newCheckinVal = checkinArr[2] + '-' + checkinArr[1] + '-' + checkinArr[0];
             var newCheckoutVal = checkoutArr[2] + '-' + checkoutArr[1] + '-' + checkoutArr[0];
-            searchParams = searchParams.replace(checkinVal, newCheckinVal);
-            searchParams = searchParams.replace(checkoutVal, newCheckoutVal);
+            searchParams.set('checkin', newCheckinVal);
+            searchParams.set('checkout', newCheckoutVal);
 
             var paramNames = [
                 'adults',
@@ -307,23 +206,31 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
                 'checkout',
                 'children',
                 'guests',
-                'hosting_amenities%5B%5D',
+                'hosting_amenities[]',
                 'infants',
                 'ne_lat',
                 'ne_lng',
                 'price_max',
-                'room_types%5B%5D',
+                'room_types[]',
                 'sw_lat',
                 'sw_lng',
                 'zoom'
             ];
 
-            searchParams = updateQuerystringValues(searchParams, document.URL, paramNames);
-            searchParams = removeParameter(searchParams, 'page');
+            var currentUrl = new URLSearchParams(window.location.search);
+            for (var i=0; i<paramNames.length; i++) {
+                // Merge any current search terms
+                paramVal = currentUrl.get(paramNames[i]);
+                if (paramVal !== null) {
+                    searchParams.set(paramNames[i], paramVal);
+                }
+            }
 
             var urls = [nbPages-1];
             for (var i=0; i<nbPages; i++) {
-                urls[i] = searchParams + '&page=' + (i + 1);
+                var newUrl = searchParams;
+                newUrl.set('page', i+1);
+                urls[i] = "search/search_results?" + newUrl.toString();
             }
 
             for (var j=0; j<nbPages; j++) {
@@ -339,7 +246,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         };
 
-        $('div[role=menubar]').after('<div style="border: 1px solid #dce0e0; position: absolute; background-color: #F0F0F0; top:0px; z-index:11; width: 238px;"><a id="get-listing" href="javascript: void();">Get all listings...</a></div>');
+        $('.search-results:not(.loading)').before('<div style="text-align:center; margin: 10px auto;"><a id="get-listing" style="display: inline-block; padding: 10px; color: white; background: #008489; border-radius: 6px;" href="#">Get all listings...</a></div>');
         $('#get-listing').click(function() {
             getListings();
         });
