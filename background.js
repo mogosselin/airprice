@@ -22,12 +22,12 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
         key = key.substring(7, endOf);
 
         var currency = '???';
-        $('#currency-selector').each(function() {
-            if ($(this).val().length == 3) {
-                currency  = $.trim($(this).val());
-                return false;
-            }
-        });
+        //$('#currency-selector').each(function() {
+            //if ($(this).val().length == 3) {
+                //currency  = $.trim($(this).val());
+                //return false;
+            //}
+        //});
 
         var check_in = '';
         var check_in_price_format = '';
@@ -185,7 +185,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
             var metaUrl = $('meta[property="al:ios:url"]').attr('content');
             metaUrl = metaUrl.replace('check_in', 'checkin');
             metaUrl = metaUrl.replace('check_out', 'checkout');
-            var searchParams = '?' + metaUrl.substring(18) + '&location=' + $('.copy_14aozyc').eq(0).text();
+            var searchParams = '?' + metaUrl.substring(18) + '&location=' + $('._k3jto05').eq(0).val();
             searchParams = decodeURIComponent(searchParams);
             searchParams = new URLSearchParams(searchParams);
 
@@ -246,7 +246,7 @@ if(window.location.href.indexOf(".airbnb.") > -1 && window.location.href.indexOf
 
         };
 
-        $('.search-results:not(.loading)').before('<div style="text-align:center; margin: 10px auto;"><a id="get-listing" style="display: inline-block; padding: 10px; color: white; background: #008489; border-radius: 6px;" href="#">Get all listings...</a></div>');
+        $('div[role=menubar]').before('<div style="text-align:center; margin: 10px auto;"><a id="get-listing" style="display: block; padding: 10px; color: white; background: #008489; border-radius: 6px;" href="#">Get all listings...</a></div>');
         $('#get-listing').click(function() {
             getListings();
         });
