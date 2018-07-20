@@ -1,3 +1,7 @@
+# IMPORTANT: Current Status
+
+AirBnb changed their apis, hence this script is not working at the moment. Feel free to send a pull request if you find the time to fix it.
+
 # AirPrice
 
 AirPrice is a Chrome extension that displays Airbnb search results in a
